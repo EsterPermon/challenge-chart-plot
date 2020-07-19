@@ -25,3 +25,13 @@
 .chart-button:active {
   background-color: rgb(19, 104, 231);
 }
+
+.chart-button:disabled{
+  background-color: rgb(156, 191, 243);
+  color: gray;
+}
+
+.chart-button:disabled:hover{
+  box-shadow: none;
+  cursor: default;
+}
