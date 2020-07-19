@@ -2,8 +2,7 @@ import React from 'react';
 
 import './Toolbar.css';
 
-const Toolbar = props => {
-
+const Toolbar = React.memo(props => {
   return (
     <div className="toolbar">
       <h1>
@@ -11,6 +10,6 @@ const Toolbar = props => {
       </h1>
     </div>
   )
-}
+});
 
 export default Toolbar;
