@@ -1,9 +1,9 @@
 .toolbar{
   display: flex;
-  background-color: rgba(128, 128, 128, 0.7);
+  background-color: rgba(128, 128, 128, 0.3);
   align-items: center;
   padding: 16px;
-  color: aliceblue;
+  //color: white;
 }
 
 .toolbar h1 {
