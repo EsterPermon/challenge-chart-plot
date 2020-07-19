@@ -1,0 +1,22 @@
+.user-input {
+  display: flex;
+  justify-content: center;
+  height: 40%;
+  padding: 5px;
+}
+
+.text-area {
+  font-family: 'Source Code Pro', monospace;
+  font-weight: 600;
+  width: 100%;
+  max-height: 300px;
+  resize: vertical;
+  border: 3px solid gray;
+  border-radius: 10px;
+  outline: none;
+  background-color: whitesmoke;
+}
+
+.text-area:active{
+  border: 3px solid rgb(85, 84, 84);
+}
