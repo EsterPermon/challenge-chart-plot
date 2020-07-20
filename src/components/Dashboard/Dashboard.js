@@ -4,11 +4,13 @@ import Toolbar from '../Toolbar/Toolbar'
 import './Dashboard.css';
 import Footer from '../Footer/Footer';
 import UserInput from '../UserInput/UserInput';
+import LineChart from '../LineChart/LineChart';
 
 const Dashboard = props => {
 
   const title = 'Ester\'s Challenge';
   const [disableButton, setDisableButton] = useState(true);
+  const chartData =  { };
 
   const generateChartHandler = () => { console.log('chart')};
 
@@ -25,9 +27,14 @@ const Dashboard = props => {
   return (
     <div className="dashboard">
       <Toolbar title={title}/>
+      <span className="content">
       <UserInput
         sendInput={inputHandler}
       />
+        <LineChart 
+          data={chartData}
+        />
+      </span>
       <Footer 
         disable={disableButton} 
         clicked={generateChartHandler}

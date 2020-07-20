@@ -20,13 +20,11 @@ const UserInput = React.memo(props => {
   }, [enteredInput, sendInput]);
 
   return(
-    <div className="user-input">
-      <textarea
-        className="text-area"
-        onChange={event => setEnteredInput(event.target.value)} 
-        ref={inputRef}>
-      </textarea>
-    </div>
+    <textarea
+      className="text-area"
+      onChange={event => setEnteredInput(event.target.value)} 
+      ref={inputRef}>
+    </textarea>
   )
 });
 
