@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import Toolbar from '../Toolbar/Toolbar'
 import './Dashboard.css';
@@ -9,13 +9,34 @@ import LineChart from '../LineChart/LineChart';
 const Dashboard = props => {
 
   const title = 'Ester\'s Challenge';
-  const chartData =  { };
+  const [chartData, setChartData] =  useState({table: []}); 
   const [disableButton, setDisableButton] = useState(true);
   const [startEvent, setStartEvent] = useState({});
   const [spanEvent, setSpanEvent] = useState({});
   const [dataEvent, setDataEvent] = useState([]);
   const [stopEvent, setStopEvent] = useState({});
 
+  useEffect(() => {
+    let key;
+    let line;
+    let lines = [];
+
+    //Transforming data to attend chart's data structure
+    dataEvent.forEach(d => {
+      startEvent.select.forEach(s => {
+        key = '';
+        startEvent.group.forEach(g =>{
+          key = key.concat(d[g]).concat(' ');
+        });
+        line = {
+          timestamp: d.timestamp, group: key.slice(0, key.length-1), group_select: key.concat(s), select: s, select_value:  d[s]        
+        };
+        lines.push(line);
+      });
+      return lines;
+    });
+    setChartData({table: [...lines]});
+  }, [dataEvent, startEvent]);
 
   const processEvent = useCallback((obj) =>{
     switch (obj['type']) {
@@ -36,10 +57,6 @@ const Dashboard = props => {
     }
   },[]);
 
-  const processDataForChart = () => {
-    
-  }
-
   const readDataFromInput = useCallback((input) => {
     let started = false;
     /*
@@ -50,7 +67,6 @@ const Dashboard = props => {
     const regex = /(\w+):/g;
     input = input.replace(regex, (a, b) => "\"" + b + "\":" );
     input = input.replace(/'/g, '"');
-    
     input.split('\n').forEach((row) => {
       let obj = JSON.parse(row);
       /*
@@ -67,7 +83,6 @@ const Dashboard = props => {
         }
       }
     });
-    processDataForChart()
   },[processEvent]);
 
   const generateChartHandler = () => { console.log('chart')};
