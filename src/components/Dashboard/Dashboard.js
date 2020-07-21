@@ -10,6 +10,7 @@ const Dashboard = props => {
 
   const title = 'Ester\'s Challenge';
   const [chartData, setChartData] =  useState({table: []}); 
+  const [allData, setAllData] =  useState({table: []}); 
   const [disableButton, setDisableButton] = useState(true);
   const [showChart, setShowChart] = useState(false);
   const [startEvent, setStartEvent] = useState({});
@@ -36,11 +37,20 @@ const Dashboard = props => {
       });
       return lines;
     });
-    setChartData({table: [...lines]});
-  }, [dataEvent, startEvent]);
+
+    if(spanEvent.hasOwnProperty('begin') && spanEvent.hasOwnProperty('end')){
+      setAllData({table: [...lines]});
+      const filteredLines = lines.filter(l => 
+        l.timestamp >= spanEvent.begin && l.timestamp <= spanEvent.end
+      );
+      setChartData({table: [...filteredLines]});
+    } else {
+      setChartData({table: [...lines]});
+    }
+  }, [dataEvent, startEvent, spanEvent]);
 
   const processEvent = useCallback((obj) =>{
-    switch (obj['type']) {
+    switch (obj.type) {
       case 'start':
         setStartEvent({...obj});
         break;
@@ -70,17 +80,33 @@ const Dashboard = props => {
     input = input.replace(/'/g, '"');
     input.split('\n').forEach((row) => {
       let obj = JSON.parse(row);
-      /*
-       * The events are ignored if they don't have the mandatory props or
-       * while a start event is not detected
-       */
-      if(obj.hasOwnProperty("type") && obj.hasOwnProperty("timestamp")){
-        if(started){
-          processEvent(obj);
-        } 
-        else if(obj["type"] === 'start'){
-          started = true;
-          processEvent(obj);
+
+      //Events without the mandatory props are ignored
+      if(obj.hasOwnProperty('type') && obj.hasOwnProperty('timestamp')){
+        switch (obj.type) {
+          // Start events clean possible old data sets and allow new events handling
+          case 'start':
+            if(!started){
+              started = true;
+              setAllData({});
+              setChartData({});
+              processEvent(obj);
+            }
+            break;
+          // Stop events turn the started flag false therefore new events will be ignored
+          case 'stop':
+            if(started){
+              processEvent(obj);
+              started = false;
+              console.log('stopped');
+            }
+            break;
+          // Span and data events are processed only if a start event was already inputted
+          default:
+            if(started){
+              processEvent(obj);
+            }
+            break;
         }
       }
     });
