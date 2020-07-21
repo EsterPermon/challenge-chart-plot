@@ -54,7 +54,7 @@ const Dashboard = props => {
     input.split('\n').forEach((row) => {
       let obj = JSON.parse(row);
       /*
-       * The ivents are ignored if they don't have the mandatory props or
+       * The events are ignored if they don't have the mandatory props or
        * while a start event is not detected
        */
       if(obj.hasOwnProperty("type") && obj.hasOwnProperty("timestamp")){
