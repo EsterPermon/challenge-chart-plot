@@ -38,15 +38,7 @@ const Dashboard = props => {
       return lines;
     });
 
-    if(spanEvent.hasOwnProperty('begin') && spanEvent.hasOwnProperty('end')){
-      setAllData({table: [...lines]});
-      const filteredLines = lines.filter(l => 
-        l.timestamp >= spanEvent.begin && l.timestamp <= spanEvent.end
-      );
-      setChartData({table: [...filteredLines]});
-    } else {
-      setChartData({table: [...lines]});
-    }
+    setAllData({table: [...lines]});
   }, [dataEvent, startEvent, spanEvent]);
 
   const processEvent = useCallback((obj) =>{
@@ -114,6 +106,14 @@ const Dashboard = props => {
 
   const generateChartHandler = () => { 
     setShowChart(true);
+    if(spanEvent.hasOwnProperty('begin') && spanEvent.hasOwnProperty('end')){
+      const filteredLines = allData.table.filter(l => 
+        l.timestamp >= spanEvent.begin && l.timestamp <= spanEvent.end
+      );
+      setChartData({table: [...filteredLines]});
+    } else {
+      setChartData({...allData.table});
+    }
   };
 
   const inputHandler = useCallback((input) => { 
@@ -122,8 +122,6 @@ const Dashboard = props => {
       readDataFromInput(input);
     } else {
       setDisableButton(true);
-      setShowChart(false);
-      console.log('input null');
     }
   },[readDataFromInput]);
 
