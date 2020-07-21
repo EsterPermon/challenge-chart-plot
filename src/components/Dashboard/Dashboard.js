@@ -11,6 +11,7 @@ const Dashboard = props => {
   const title = 'Ester\'s Challenge';
   const [chartData, setChartData] =  useState({table: []}); 
   const [disableButton, setDisableButton] = useState(true);
+  const [showChart, setShowChart] = useState(false);
   const [startEvent, setStartEvent] = useState({});
   const [spanEvent, setSpanEvent] = useState({});
   const [dataEvent, setDataEvent] = useState([]);
@@ -85,7 +86,9 @@ const Dashboard = props => {
     });
   },[processEvent]);
 
-  const generateChartHandler = () => { console.log('chart')};
+  const generateChartHandler = () => { 
+    setShowChart(true);
+  };
 
   const inputHandler = useCallback((input) => { 
     if(input.length > 0 ){
@@ -93,6 +96,7 @@ const Dashboard = props => {
       readDataFromInput(input);
     } else {
       setDisableButton(true);
+      setShowChart(false);
       console.log('input null');
     }
   },[readDataFromInput]);
@@ -104,9 +108,10 @@ const Dashboard = props => {
         <UserInput
           sendInput={inputHandler}
         />
+        {showChart &&
         <LineChart 
           data={chartData}
-        />
+        />}
       </span>
       <Footer 
         disable={disableButton} 
