@@ -47,7 +47,7 @@ const LineChart = (props) => {
   ],
     "data": [
       {
-        "name": "table",
+        "name": "table"
       }
     ],
   
@@ -84,6 +84,22 @@ const LineChart = (props) => {
       {"orient": "bottom", "scale": "x"},
       {"orient": "left", "scale": "y"}
     ],
+    "legends": [
+      {
+        "fill": "color",
+        "symbolSize": 150,
+        "labelFontSize": 15,
+        "orient":"left"
+      
+      },
+       {
+        "stroke": "colorStroke",
+        "symbolType": "stroke",
+        "symbolStrokeWidth": 4,
+        "labelFontSize": 15,
+        "orient":"left"
+      }
+    ],
     "marks": [
       {
         "type": "group",
@@ -94,43 +110,44 @@ const LineChart = (props) => {
             "groupby": ["group_select"]
           }
         },
-        "marks": [
-          {
-            "type": "line",
-            "from": {"data": "series"},
-            "encode": {
-              "enter": {
-                "x": {"scale": "x", "field": "timestamp"},
-                "y": {"scale": "y", "field": "select_value"},
-                "stroke": {"scale": "colorStroke", "field": "group"},
-                "strokeWidth": {"value": 2},
-                "interpolate": {"value": "linear"},
-                "strokeOpacity": {"value": 1}
-              }
-            }
-          },
-          {
-            "type": "symbol",
-            "from": {"data": "series"},
-            "encode": {
-              "enter": {
-                "x": {"scale": "x", "field": "timestamp"},
-                "y": {"scale": "y", "field": "select_value"},
-                "fill": {"scale": "color", "field": "select"},
-                "stroke": {"scale": "colorStroke", "field": "group"},
-                "strokeWidth": {"value": 3},
-                "strokeOpacity": {"value": 1},
-                "size": {"value": 180}
-              }
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "timestamp"},
+              "y": {"scale": "y", "field": "select_value"},
+              "stroke": {"scale": "colorStroke", "field": "group"},
+              "strokeWidth": {"value": 3},
+              "interpolate": {"value": "linear"}
             }
           }
-        ]
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "timestamp"},
+              "y": {"scale": "y", "field": "select_value"},
+              "fill": {"scale": "color", "field": "select"},
+              "size": {"value": 200}
+            }
+          }
+        }
+      ]
       }
     ]
-  }
+  };
   
   return (
-    <Vega className="line-chart" spec={spec} renderer={"svg"} data={props.data} actions={false}/>
+    <Vega
+      className="line-chart" 
+      spec={spec}
+      data={props.data} 
+      actions={false}
+    />
   );
   
 };
