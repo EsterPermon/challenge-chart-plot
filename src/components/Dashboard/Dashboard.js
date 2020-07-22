@@ -12,6 +12,7 @@ const Dashboard = props => {
   const [chartData, setChartData] =  useState({table: []}); 
   const [allData, setAllData] =  useState({table: []}); 
   const [disableButton, setDisableButton] = useState(true);
+  const [resize, setResize] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [startEvent, setStartEvent] = useState({});
   const [spanEvent, setSpanEvent] = useState({});
@@ -90,7 +91,6 @@ const Dashboard = props => {
             if(started){
               processEvent(obj);
               started = false;
-              console.log('stopped');
             }
             break;
           // Span and data events are processed only if a start event was already inputted
@@ -125,16 +125,22 @@ const Dashboard = props => {
     }
   },[readDataFromInput]);
 
+  const resizeHandler = useCallback(() => {
+    setResize(prevResize => !prevResize);
+  }, []);
+
   return (
     <div className="dashboard">
       <Toolbar title={title}/>
       <span className="content">
         <UserInput
           sendInput={inputHandler}
+          sendResizeEvent={resizeHandler}
         />
         {showChart &&
         <LineChart 
           data={chartData}
+          resizeChart={resize}
         />}
       </span>
       <Footer 

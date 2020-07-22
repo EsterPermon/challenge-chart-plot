@@ -7,13 +7,22 @@ const LineChart = (props) => {
 
   const spec = {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "padding": 10,
+    "padding": {
+      "top": 20,
+      "right": 30,
+      "bottom": 20,
+      "left": 20
+    },
     "autosize": {
       "type": "fit",
       "resize": true,
       "contains": "padding"
     },
     "signals": [
+      {
+        "name": "resizeChart",
+        "value": props.resizeChart
+      },
     {
       "name": "width",
       "update": "containerSize()[0]",
@@ -23,6 +32,9 @@ const LineChart = (props) => {
             {
               "source": "window",
               "type": "resize"
+            },
+            {
+              "signal": "resizeChart"
             }
           ],
           "update": "containerSize()[0]"
@@ -38,6 +50,9 @@ const LineChart = (props) => {
             {
               "source": "window",
               "type": "resize"
+            },
+            {
+              "signal": "resizeChart"
             }
           ],
           "update": "containerSize()[1]"
@@ -140,8 +155,8 @@ const LineChart = (props) => {
       }
     ]
   };
-  
-  return (
+
+   return (
     <Vega
       className="line-chart" 
       spec={spec}

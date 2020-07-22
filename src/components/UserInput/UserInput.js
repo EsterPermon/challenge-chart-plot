@@ -12,7 +12,8 @@ import './UserInput.css'
 const UserInput = React.memo(props => {
   const [enteredInput, setEnteredInput] = useState('');
   const editorRef = useRef();
-  const {sendInput} = props;
+  const editorContainerRef = useRef();
+  const {sendInput, sendResizeEvent} = props;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,7 +24,14 @@ const UserInput = React.memo(props => {
     return () => {
       clearTimeout(timer);
     }
-  }, [enteredInput, sendInput]);
+  }, [enteredInput, sendInput, editorRef]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(sendResizeEvent).observe(editorContainerRef.current);
+    return () => {
+      resizeObserver.disconnect();
+    }
+  }, [editorContainerRef, sendResizeEvent])
 
   const hightlightWithLineNumbers = (input, language) =>
   highlight(input, language)
@@ -32,7 +40,10 @@ const UserInput = React.memo(props => {
     .join("\n");
 
   return(
-    <div className="editor-container">
+    <div 
+      className="editor-container" 
+      ref={editorContainerRef}
+    >
       <Editor
         className="editor"
         value={enteredInput}
