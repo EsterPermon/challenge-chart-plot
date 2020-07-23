@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
+import ErrorIcon from '@material-ui/icons/Error';
+import WarningIcon from '@material-ui/icons/Warning';
+
 import Toolbar from '../Toolbar/Toolbar'
 import './Dashboard.css';
 import Footer from '../Footer/Footer';
@@ -18,6 +21,8 @@ const Dashboard = props => {
   const [spanEvent, setSpanEvent] = useState({});
   const [dataEvent, setDataEvent] = useState([]);
   const [stopEvent, setStopEvent] = useState({});
+  const [invalidInput, setInvalidInput] = useState('');
+  const [ignoredInput, setIgnoredInput] = useState('');
 
   useEffect(() => {
     let key;
@@ -132,6 +137,18 @@ const Dashboard = props => {
   return (
     <div className="dashboard">
       <Toolbar title={title}/>
+      {invalidInput &&
+        <p className="message error">
+          <ErrorIcon className="icon" />
+          {invalidInput}!
+        </p>
+      }
+      {ignoredInput &&
+        <p className="message warning">
+          <WarningIcon className="icon" />
+          {ignoredInput}!
+        </p>
+      }
       <span className="content">
         <UserInput
           sendInput={inputHandler}

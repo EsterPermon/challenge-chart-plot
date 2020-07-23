@@ -14,3 +14,22 @@
   height: 100%;
   overflow: hidden;
 }
+
+.message {
+  margin: 10px 10px 0 15px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.error {
+  color: red;
+}
+
+.warning {
+  color: orange;
+}
+
+.icon{
+  margin-right: 5px;
+}
