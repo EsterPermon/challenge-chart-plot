@@ -111,19 +111,21 @@ const Dashboard = props => {
 
   const generateChartHandler = () => { 
     setShowChart(true);
-    if(spanEvent.hasOwnProperty('begin') && spanEvent.hasOwnProperty('end')){
+    if(Object.keys(spanEvent).length > 0 ){
       const filteredLines = allData.table.filter(l => 
         l.timestamp >= spanEvent.begin && l.timestamp <= spanEvent.end
       );
       setChartData({table: [...filteredLines]});
     } else {
-      setChartData({...allData.table});
+      setChartData({table: [...allData.table]});
     }
   };
 
   const inputHandler = useCallback((input) => { 
+    setInvalidInput('');
+    setIgnoredInput('');
+
     if(input.length > 0 ){
-      setDisableButton(false);
       readDataFromInput(input);
     } else {
       setDisableButton(true);
