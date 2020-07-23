@@ -82,7 +82,7 @@ class DashboardInputValidator {
     let stopped = false;
     let interrupted = false;
     let obj;
-    const inputLines = this.inputParse(input);
+    const inputLines = this.inputParse(input.toLowerCase());
 
     for(let i=0; i<inputLines.length; i++ ) {
       try {

@@ -8,7 +8,9 @@ import './Dashboard.css';
 import Footer from '../Footer/Footer';
 import UserInput from '../UserInput/UserInput';
 import LineChart from '../LineChart/LineChart';
+
 import DashboardInputValidator from './DashboardInputValidator';
+import '../../utils/string_extensions';
 
 const Dashboard = props => {
 
@@ -44,12 +46,17 @@ const Dashboard = props => {
       startEvent.select.forEach(s => {
         key = '';
         startEvent.group.forEach(g =>{
-          key = key.concat(d[g]).concat(' ');
+          key = key.concat(d[g].toTitleCase()).concat(' ');
         });
         line = {
-          timestamp: d.timestamp, group: key.slice(0, key.length-1), group_select: key.concat(s), select: s, select_value:  d[s]        
+          timestamp: d.timestamp, 
+          group: key.slice(0, key.length-1), 
+          group_select: key.concat(s), 
+          select: s.toTitleCase(), 
+          select_value:  d[s]        
         };
         lines.push(line);
+        console.log(lines)
       });
     });
 
