@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 import ErrorIcon from '@material-ui/icons/Error';
 import WarningIcon from '@material-ui/icons/Warning';
@@ -12,6 +12,10 @@ import LineChart from '../LineChart/LineChart';
 const Dashboard = props => {
 
   const title = 'Ester\'s Challenge';
+  const spanEventPropertiesLength = 4;
+  const startEventPropertiesLength = 4;
+  const stopEventPropertiesLength = 2;
+  let dataEventPropertiesLength = useRef();
   const [chartData, setChartData] =  useState({table: []}); 
   const [allData, setAllData] =  useState({table: []}); 
   const [disableButton, setDisableButton] = useState(true);
@@ -23,6 +27,11 @@ const Dashboard = props => {
   const [stopEvent, setStopEvent] = useState({});
   const [invalidInput, setInvalidInput] = useState('');
   const [ignoredInput, setIgnoredInput] = useState('');
+  const [endOfInputHandling, setEndOfInputHandling] = useState(false);
+
+  useEffect(() => {
+    invalidInput.length === 0 ? setDisableButton(false) : setDisableButton(true);
+  }, [endOfInputHandling, invalidInput])
 
   useEffect(() => {
     let key;
@@ -41,11 +50,10 @@ const Dashboard = props => {
         };
         lines.push(line);
       });
-      return lines;
     });
 
     setAllData({table: [...lines]});
-  }, [dataEvent, startEvent, spanEvent]);
+  }, [dataEvent, startEvent]);
 
   const checkObjectPropertiesLength = (obj, propertiesLength, lineNumber) => {
     if(Object.keys(obj).length < propertiesLength){
@@ -88,7 +96,7 @@ const Dashboard = props => {
     setStartEvent({...obj});
   }
 
-    /*
+  /*
      * Adding double quotes to the keys and replacing
      * single quotes for double quotes in the values
      * to enable the JSON.parse usage
@@ -100,53 +108,72 @@ const Dashboard = props => {
     return input.split("\n");
   }
 
-  const processEvent = useCallback((obj) =>{
-    switch (obj.type) {
-      case 'start':
-        setStartEvent({...obj});
-        break;
-      case 'data':
-        setDataEvent(prevData => [...prevData, {...obj}]);
-      break;
-      case 'span':
-        setSpanEvent({...obj});
-        break;
-      case 'stop':
-        setStopEvent({...obj});
-        break;
-      default:
-        break;
-    }
-  },[]);
+  const readDataFromInput = useCallback((input) => {
+    let started = false;
+    let stopped = false;
+    let interrupted = false;
+    let obj;
+    const inputLines = inputParse(input);
+
+    for(let i=0; i<inputLines.length; i++ ) {
+      try {
+        obj = JSON.parse(inputLines[i]);
       //Events without the mandatory props are ignored
-      if(obj.hasOwnProperty('type') && obj.hasOwnProperty('timestamp')){
-        switch (obj.type) {
-          // Start events clean possible old data sets and allow new events handling
-          case 'start':
-            if(!started){
-              started = true;
-              setAllData({});
-              setChartData({});
-              processEvent(obj);
-            }
-            break;
-          // Stop events turn the started flag false therefore new events will be ignored
-          case 'stop':
-            if(started){
-              processEvent(obj);
-              started = false;
-            }
-            break;
-          // Span and data events are processed only if a start event was already inputted
-          default:
-            if(started){
-              processEvent(obj);
-            }
-            break;
+        if(obj.hasOwnProperty('type') && obj.hasOwnProperty('timestamp')){
+          switch (obj.type) {
+            // Start events clean possible old data sets and allow new events handling
+            case 'start':
+              if(!started){
+                if(!checkObjectPropertiesLength(obj, startEventPropertiesLength, i+1)){
+                  break;
+                }
+                newStartEventHandler(obj);
+                started = true
+              } else {
+                setIgnoredInput(prev => prev.length ? prev : 'New start event before stop event ignored at line '.concat(i+1));
+              }
+              break;
+            // Stop events turn the started flag false therefore new events will be ignored
+            case 'stop':
+              if(started){
+                if(checkObjectPropertiesLength(obj, stopEventPropertiesLength, i+1)){
+                  setStopEvent({...obj});
+                  started = false;
+                  stopped = true;
+                }
+              } else {
+                setIgnoredInput(prev => prev.length ? prev : 'Inputs before start event ignored at line '.concat(i+1));
+              }
+              break;
+            // Span and data events are processed only if a start event was already inputted
+            case 'span':
+              newDefaultEventHandler(obj, spanEventPropertiesLength, started, stopped, i+1, false);
+              break;
+            case 'data':
+              newDefaultEventHandler(obj, dataEventPropertiesLength.current, started, stopped, i+1, true);
+              break;
+            default:
+              setIgnoredInput(prev => prev.length ? prev : 'Invalid event type at line '.concat(i+1));
+              break;
+          }
+        } else {
+          setInvalidInput(prev => prev.length ? prev : 'Missing mandatory property at line '.concat(i+1));
+          interrupted = true;
+          break;
         }
       }
-    });
-  },[processEvent]);
+      catch (e) {
+        setInvalidInput(prev => prev.length ? prev : 'Malformed input at line '.concat(i+1));
+        console.log(e);
+        interrupted = true;
+        break;
+      }
+    }
+    if(!started && !stopped && !interrupted){
+      setInvalidInput(prev => prev.length ? prev : 'Start event not found');
+    }
+    setEndOfInputHandling(prev => !prev);
+  },[newDefaultEventHandler]);
 
   const generateChartHandler = () => { 
     setShowChart(true);
