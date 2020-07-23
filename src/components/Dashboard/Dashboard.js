@@ -47,6 +47,59 @@ const Dashboard = props => {
     setAllData({table: [...lines]});
   }, [dataEvent, startEvent, spanEvent]);
 
+  const checkObjectPropertiesLength = (obj, propertiesLength, lineNumber) => {
+    if(Object.keys(obj).length < propertiesLength){
+      setIgnoredInput(prev => prev.length ? prev : 'Missing property at line '.concat(lineNumber));
+      return false;
+    }
+    return true;
+  }
+
+  const newSpanEventHandler = useCallback((obj, lineNumber) =>{
+    if(obj.hasOwnProperty('begin') && 
+      obj.hasOwnProperty('end') && 
+      obj.begin <= obj.end) {
+        setSpanEvent({...obj});
+    } else {
+      setIgnoredInput(prev => prev.length ? prev : 'Invalid span event at line '.concat(lineNumber));
+    }
+  },[]);
+
+  const newDefaultEventHandler = useCallback((obj, eventPropertiesLength, started, stopped, lineNumber, isData) => {
+    if(checkObjectPropertiesLength(obj, eventPropertiesLength, lineNumber)){
+      if(started){
+        if(isData) {
+          setDataEvent(prevData => [...prevData, {...obj}])
+        } else {
+          newSpanEventHandler(obj, lineNumber);
+        }
+      } else if(stopped){
+        setIgnoredInput(prev => prev.length ? prev : 'Inputs after stop event ignored at line '.concat(lineNumber));
+      } else{
+      setIgnoredInput(prev => prev.length ? prev : 'Inputs before start event ignored at line '.concat(lineNumber));
+      }
+    }
+    return false;
+  }, [newSpanEventHandler]);
+
+  const newStartEventHandler = (obj) => {
+    dataEventPropertiesLength.current = 2 + obj.select.length + obj.group.length;
+    setAllData({});
+    setStartEvent({...obj});
+  }
+
+    /*
+     * Adding double quotes to the keys and replacing
+     * single quotes for double quotes in the values
+     * to enable the JSON.parse usage
+     */
+  const inputParse = (input) => {
+    const regex = /(\w+):/g;
+    input = input.replace(regex, (a, b) => "\"" + b + "\":" );
+    input = input.replace(/'/g, '"');
+    return input.split("\n");
+  }
+
   const processEvent = useCallback((obj) =>{
     switch (obj.type) {
       case 'start':
@@ -65,20 +118,6 @@ const Dashboard = props => {
         break;
     }
   },[]);
-
-  const readDataFromInput = useCallback((input) => {
-    let started = false;
-    /*
-     * Adding double quotes to the keys and replacing
-     * single quotes for double quotes in the values
-     * to enable the JSON.parse usage
-     */
-    const regex = /(\w+):/g;
-    input = input.replace(regex, (a, b) => "\"" + b + "\":" );
-    input = input.replace(/'/g, '"');
-    input.split('\n').forEach((row) => {
-      let obj = JSON.parse(row);
-
       //Events without the mandatory props are ignored
       if(obj.hasOwnProperty('type') && obj.hasOwnProperty('timestamp')){
         switch (obj.type) {
