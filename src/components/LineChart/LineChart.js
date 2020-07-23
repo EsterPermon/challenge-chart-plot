@@ -23,43 +23,71 @@ const LineChart = (props) => {
         "name": "resizeChart",
         "value": props.resizeChart
       },
-    {
-      "name": "width",
-      "update": "containerSize()[0]",
-      "on": [
-        {
-          "events": [
-            {
-              "source": "window",
-              "type": "resize"
-            },
-            {
-              "signal": "resizeChart"
-            }
-          ],
-          "update": "containerSize()[0]"
-        }
-      ]
-    },  
-    {
-      "name": "height",
-      "update": "containerSize()[1]",
-      "on": [
-        {
-          "events": [
-            {
-              "source": "window",
-              "type": "resize"
-            },
-            {
-              "signal": "resizeChart"
-            }
-          ],
-          "update": "containerSize()[1]"
-        }
-      ]
-    } 
-  ],
+      {
+        "name": "width",
+        "update": "containerSize()[0]",
+        "on": [
+          {
+            "events": [
+              {
+                "source": "window",
+                "type": "resize"
+              },
+              {
+                "signal": "resizeChart"
+              }
+            ],
+            "update": "containerSize()[0]"
+          }
+        ]
+      },  
+      {
+        "name": "height",
+        "update": "containerSize()[1]",
+        "on": [
+          {
+            "events": [
+              {
+                "source": "window",
+                "type": "resize"
+              },
+              {
+                "signal": "resizeChart"
+              }
+            ],
+            "update": "containerSize()[1]"
+          }
+        ]
+      }, 
+      {
+        "name": "hoverLine",
+        "value": null,
+        "on": [
+          {
+            "events": "@legendLines:mouseover, @legendLinesLabel:mouseover",
+            "update": "datum.value"
+          },
+          {
+            "events": "@legendLines:mouseout, @legendLinesLabel:mouseout",
+            "update": "null"
+          }
+        ]
+      },  
+      {
+        "name": "hoverPoint",
+        "value": null,
+        "on": [
+          {
+            "events": "@legendPoints:mouseover, @legendPointsLabel:mouseover",
+            "update": "datum.value"
+          },
+          {
+          "events": "@legendPoints:mouseout, @legendPointsLabel:mouseout",
+          "update": "null"
+          }
+        ]
+      } 
+    ],
     "data": [
       {
         "name": "table"
@@ -102,19 +130,69 @@ const LineChart = (props) => {
     "legends": [
       {
         "fill": "color",
-        "symbolSize": 150,
+        "symbolSize": 200,
         "labelFontSize": 15,
-        "orient":"left"
-      
+        "orient":"left",
+        "encode":{
+          "symbols": {
+            "name": "legendPoints",
+            "interactive": true,
+            "enter":{
+              "stroke": {
+              "value": "black"
+            },
+            "strokeWidth": {
+              "value": 2
+            }
+          },
+          "update": {
+            "strokeOpacity": [
+              {
+                "test": "hoverPoint && hoverPoint == datum.value",
+                "value": 1
+              },
+              {
+                "value": 0
+              }
+            ]
+          }
+          },
+          "labels": {
+            "name": "legendPointsLabel",
+            "interactive": true
+          }
+        }
       },
        {
         "stroke": "colorStroke",
         "symbolType": "stroke",
-        "symbolStrokeWidth": 4,
+        "symbolStrokeWidth": 5,
+        "symbolSize": 250,
         "labelFontSize": 15,
-        "orient":"left"
+        "orient":"left",
+        "encode":{
+          "symbols": {
+            "name": "legendLines",
+            "interactive": true,
+            "update": {
+            "opacity": [
+              {
+                "test": "hoverLine && hoverLine != datum.value", 
+                "value": 0.4
+              },
+              {
+                "value": 1
+              }
+            ]
+          }
+        },
+        "labels": {
+          "name": "legendLinesLabel",
+          "interactive": true
+        }
       }
-    ],
+    }
+  ],
     "marks": [
       {
         "type": "group",
@@ -136,6 +214,17 @@ const LineChart = (props) => {
               "stroke": {"scale": "colorStroke", "field": "group"},
               "strokeWidth": {"value": 3},
               "interpolate": {"value": "linear"}
+            },
+            "update": {
+              "opacity": [
+                {
+                  "test": "hoverLine && hoverLine != datum.group", 
+                  "value": 0.2
+                },
+                {
+                  "value": 1
+                }
+              ]
             }
           }
         },
@@ -147,7 +236,24 @@ const LineChart = (props) => {
               "x": {"scale": "x", "field": "timestamp"},
               "y": {"scale": "y", "field": "select_value"},
               "fill": {"scale": "color", "field": "select"},
-              "size": {"value": 200}
+              "size": {"value": 200},
+              "stroke": {
+                "value": "black"
+              },
+              "strokeWidth": {
+                "value": 2
+              }
+            },
+            "update": {
+              "strokeOpacity": [
+                {
+                  "test": "hoverPoint && hoverPoint == datum.select", 
+                  "value": 1
+                },
+                {
+                  "value": 0
+                }
+              ]
             }
           }
         }
@@ -164,7 +270,6 @@ const LineChart = (props) => {
       actions={false}
     />
   );
-  
 };
 
 export default LineChart;

@@ -26,6 +26,7 @@ const UserInput = React.memo(props => {
     }
   }, [enteredInput, sendInput, editorRef]);
 
+  //Listening input area resize in order to resize chart
   useEffect(() => {
     const resizeObserver = new ResizeObserver(sendResizeEvent).observe(editorContainerRef.current);
     return () => {

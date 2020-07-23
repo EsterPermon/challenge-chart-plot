@@ -9,8 +9,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  align-items: space-between;
-  align-content: space-between;
+  align-content: center;
   justify-content: space-between;
   height: 100%;
   overflow: hidden;
