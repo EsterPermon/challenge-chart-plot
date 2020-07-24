@@ -1,6 +1,6 @@
 .footer {
   display: flex;
-  background-color: rgba(128, 128, 128, 0.3);
+  background-color: #111b1b;
   align-items: center;
   padding: 16px;
   color: aliceblue;
@@ -9,25 +9,26 @@
 .chart-button {
   cursor: pointer;
   padding: 12px;
-  background-color: rgb(33, 116, 241);
+  background-color: #2F4F4F;
   height: 42px;
-  color: white;
+  color: whitesmoke;
   border-radius: 5px;
-  border: 1px solid rgba(128, 128, 128, 0.7);
+  border: 1px solid #2F4F4F;
   outline:none;
   font-weight: 600;
+  font-size: 16px;
 }
 
 .chart-button:hover{
-  box-shadow: 0 0 3px black;
+  box-shadow: 0 0 3px white;
 }
 
 .chart-button:active {
-  background-color: rgb(19, 104, 231);
+  background-color: #263f3f;
 }
 
 .chart-button:disabled{
-  background-color: rgb(156, 191, 243);
+  background-color: #263f3f;
   color: gray;
 }
 

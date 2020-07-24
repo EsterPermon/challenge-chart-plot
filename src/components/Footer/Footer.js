@@ -4,7 +4,7 @@ import './Footer.css';
 
 const Footer = React.memo( props => {
 
-  const buttonTitle = 'GENERATE CHART';
+  const buttonTitle = 'Generate Chart';
   return (
     <div className="footer">
       <button 

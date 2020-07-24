@@ -124,42 +124,36 @@ const LineChart = (props) => {
     ],
   
     "axes": [
-      {"orient": "bottom", "scale": "x"},
-      {"orient": "left", "scale": "y"}
+      {"orient": "bottom", "scale": "x", "labelColor": "gray", "labelFontSize": 12, "grid": true, "gridWidth": 0.2},
+      {"orient": "left", "scale": "y", "labelColor": "gray", "labelFontSize": 12, "grid": true, "gridWidth": 0.2}
     ],
     "legends": [
       {
         "fill": "color",
         "symbolSize": 200,
         "labelFontSize": 15,
+        "labelColor": "gray",
+        "labelFontWeight": 600,
         "orient":"left",
         "encode":{
           "symbols": {
             "name": "legendPoints",
             "interactive": true,
-            "enter":{
-              "stroke": {
-              "value": "black"
-            },
-            "strokeWidth": {
-              "value": 2
-            }
-          },
           "update": {
-            "strokeOpacity": [
+            "opacity": [
               {
                 "test": "hoverPoint && hoverPoint == datum.value",
-                "value": 1
+                "value": 0.2
               },
               {
-                "value": 0
+                "value": 1
               }
             ]
           }
-          },
-          "labels": {
-            "name": "legendPointsLabel",
-            "interactive": true
+        },
+        "labels": {
+          "name": "legendPointsLabel",
+          "interactive": true,
           }
         }
       },
@@ -169,30 +163,32 @@ const LineChart = (props) => {
         "symbolStrokeWidth": 5,
         "symbolSize": 250,
         "labelFontSize": 15,
+        "labelFontWeight": 600,
+        "labelColor": "gray",
         "orient":"left",
         "encode":{
           "symbols": {
             "name": "legendLines",
             "interactive": true,
             "update": {
-            "opacity": [
-              {
-                "test": "hoverLine && hoverLine != datum.value", 
-                "value": 0.4
-              },
-              {
-                "value": 1
-              }
-            ]
+              "opacity": [
+                {
+                  "test": "hoverLine && hoverLine != datum.value", 
+                  "value": 0.2
+                },
+                {
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "labels": {
+            "name": "legendLinesLabel",
+            "interactive": true
           }
-        },
-        "labels": {
-          "name": "legendLinesLabel",
-          "interactive": true
-        }
+       }
       }
-    }
-  ],
+    ],
     "marks": [
       {
         "type": "group",
@@ -237,21 +233,15 @@ const LineChart = (props) => {
               "y": {"scale": "y", "field": "select_value"},
               "fill": {"scale": "color", "field": "select"},
               "size": {"value": 200},
-              "stroke": {
-                "value": "black"
-              },
-              "strokeWidth": {
-                "value": 2
-              }
             },
             "update": {
-              "strokeOpacity": [
+              "opacity": [
                 {
                   "test": "hoverPoint && hoverPoint == datum.select", 
-                  "value": 1
+                  "value": 0.2
                 },
                 {
-                  "value": 0
+                  "value": 1
                 }
               ]
             }
