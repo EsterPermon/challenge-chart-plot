@@ -39,10 +39,10 @@ class DashboardInputValidator {
     }
   },[]);
 
-  newDefaultEventHandler = useCallback((obj, eventPropertiesLength, started, stopped, lineNumber, isData) => {
+  newDefaultEventHandler = useCallback((obj, eventPropertiesLength, started, stopped, lineNumber) => {
     if(this.checkObjectPropertiesLength(obj, eventPropertiesLength, lineNumber)){
       if(started){
-        if(isData) {
+        if(obj.type === 'data') {
           this.setDataEvent(prevData => [...prevData, {...obj}])
         } else {
           this.newSpanEventHandler(obj, lineNumber);
@@ -116,10 +116,10 @@ class DashboardInputValidator {
               break;
             // Span and data events are processed only if a start event was already inputted
             case 'span':
-              this.newDefaultEventHandler(obj, EVENT_PROPERTIES_LENGTH.SPAN, started, stopped, i+1, false);
+              this.newDefaultEventHandler(obj, EVENT_PROPERTIES_LENGTH.SPAN, started, stopped, i+1);
               break;
             case 'data':
-              this.newDefaultEventHandler(obj, this.dataEventPropertiesLength.current, started, stopped, i+1, true);
+              this.newDefaultEventHandler(obj, this.dataEventPropertiesLength.current, started, stopped, i+1);
               break;
             default:
               this.setIgnoredInput(prev => prev.length ? prev : 'Invalid event type at line '.concat(i+1));

@@ -8,9 +8,12 @@ const Footer = React.memo( props => {
   return (
     <div className="footer">
       <button 
-      className="chart-button"
-      disabled={props.disable} 
-      onClick={props.clicked}>{buttonTitle}</button>
+        className="chart-button"
+        disabled={props.disable} 
+        onClick={props.clicked}
+      >
+          {buttonTitle}
+      </button>
     </div>
   )
 });

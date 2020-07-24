@@ -56,7 +56,6 @@ const Dashboard = props => {
           select_value:  d[s]        
         };
         lines.push(line);
-        console.log(lines)
       });
     });
 
