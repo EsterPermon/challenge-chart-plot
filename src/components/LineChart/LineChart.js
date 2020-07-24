@@ -142,7 +142,7 @@ const LineChart = (props) => {
           "update": {
             "opacity": [
               {
-                "test": "hoverPoint && hoverPoint == datum.value",
+                "test": "hoverPoint && hoverPoint != datum.value",
                 "value": 0.2
               },
               {
@@ -237,7 +237,7 @@ const LineChart = (props) => {
             "update": {
               "opacity": [
                 {
-                  "test": "hoverPoint && hoverPoint == datum.select", 
+                  "test": "hoverPoint && hoverPoint != datum.select", 
                   "value": 0.2
                 },
                 {
